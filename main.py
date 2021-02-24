@@ -16,6 +16,8 @@ size = 8
 env = []
 goal = None
 goal_index = -1
+iteration_count = 0
+perform_mutation = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
 
 def generate_board():
@@ -57,6 +59,14 @@ def is_optimal_solution_option(generation):
 def populate_board(user_board, generation):
     for i in range(size):
         user_board[generation[i]][i] = white_chess_queen
+    # return user_board
+
+
+def populate_final_board(generation):
+    temp_board = generate_board()
+    for i in range(size):
+        temp_board[generation[i]][i] = white_chess_queen
+    return temp_board
 
 
 def generate_initial_population():
@@ -218,6 +228,8 @@ def check_left_side_row(board, row, column):
 
 
 def selection():
+    global goal_index
+    global goal
     all_fitness_results = []
     new_env = []
     for gen in env:
@@ -233,24 +245,48 @@ def cross_over_function():
     for i in range(1, len(env), 2):
         gen1 = env[i - 1][:]
         gen2 = env[i][:]
-        breed(gen1, gen2)
-        # include mutating here....
+        gen1, gen2 = breed(gen1, gen2)
+        random.shuffle(perform_mutation)
+        if perform_mutation[0] == 1:
+            gen1, gen2 = mutate(gen1, gen2)
         env.append(gen1)
         env.append(gen2)
 
 
-# FIXME: need to figure out how to swap genes...
+def mutate(gen1, gen2):
+    index1 = random.randint(0, 7)
+    index2 = random.randint(0, 7)
+    gen1[index1] = index1
+    gen2[index2] = index2
+    return gen1, gen2
+
+
 def breed(gen1, gen2):
+    gen1_temp = []
+    gen2_temp = []
+    for i in range(3):
+        gen1_temp.append(gen1.pop(0))
+    for i in range(3):
+        gen2_temp.append(gen2.pop(0))
+    for i in range(5):
+        gen1_temp.append(gen2.pop(0))
+        gen2_temp.append(gen1.pop(0))
+    return gen1_temp, gen2_temp
 
 
 if __name__ == '__main__':
-# main_board = generate_board()
-# initialize_first_gen()
-# boards = []
-# for gen in env:
-#     boards.append(populate_board(main_board, gen))
-#     main_board = generate_board()
-# for board in boards:
-#     print_board(board)
-#     print()
-#     print()
+    main_board = generate_board()
+    initialize_first_gen()
+    # boards = []
+    # for gen in env:
+    #     boards.append(populate_board(main_board, gen))
+    # main_board = generate_board()
+    # for board in boards:
+    #     print_board(board)
+    # print()
+    # print()
+    for gen in env:
+        if is_optimal_solution_option(gen):
+            solution_board = populate_final_board(gen)
+            print_board(solution_board)
+

@@ -17,7 +17,7 @@ env = []
 goal = None
 goal_index = -1
 iteration_count = 0
-perform_mutation = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+perform_mutation = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
 
 
 def generate_board():
@@ -89,7 +89,8 @@ def fitness_function(generation):
     hits = 0
     temp_board = generate_board()
     populate_board(temp_board, generation)
-    for dna in generation:
+    gen_size = len(generation)
+    for dna in range(gen_size):
         safe = is_safe(temp_board, generation[dna], dna)
         if safe is False:
             hits += 1
@@ -98,49 +99,51 @@ def fitness_function(generation):
 
 # FIXME: need to update this where if a direction returns false, we increase the amount of hits
 def is_safe(board, row, column):
-    if board[row][column] == white_chess_queen or board[row][column] == white_square_obstacle:
+    cell = board[row][column]
+    if board[row][column] == white_square_obstacle:
         return False
     left_side_row = check_left_side_row(board, row, column)
     if left_side_row is False:
         return False
-    right_side_row = check_right_side_row(board, row, column)
-    if right_side_row is False:
-        return False
+    # right_side_row = check_right_side_row(board, row, column)
+    # if right_side_row is False:
+    #     return False
     up_column = check_up_column(board, row, column)
     if up_column is False:
         return False
-    down_column = check_down_column(board, row, column)
-    if down_column is False:
-        return False
+    # down_column = check_down_column(board, row, column)
+    # if down_column is False:
+    #     return False
     left_diagonal = check_left_diagonal(board, row, column)
     if left_diagonal is False:
         return False
-    left_down_diagonal = check_left_down_diagonal(board, row, column)
-    if left_down_diagonal is False:
-        return False
+    # left_down_diagonal = check_left_down_diagonal(board, row, column)
+    # if left_down_diagonal is False:
+    #     return False
     right_diagonal = check_right_diagonal(board, row, column)
     if right_diagonal is False:
         return False
-    right_down_diagonal = check_right_down_diagonal(board, row, column)
-    if right_down_diagonal is False:
-        return False
+    # right_down_diagonal = check_right_down_diagonal(board, row, column)
+    # if right_down_diagonal is False:
+    #     return False
     return True
 
 
-def check_right_down_diagonal(board, row, column):
-    if row != size - 1 and column != size - 1:
-        temp_row = row + 1
-        temp_column = column + 1
-        while temp_row < size and temp_column < size:
-            if board[temp_row][temp_column] == white_square_obstacle:
-                return True
-            elif board[temp_row][temp_column] == white_chess_queen:
-                return False
-            temp_row += 1
-            temp_column += 1
-    return True
+# def check_right_down_diagonal(board, row, column):
+#     if row != size - 1 and column != size - 1:
+#         temp_row = row + 1
+#         temp_column = column + 1
+#         while temp_row < size and temp_column < size:
+#             if board[temp_row][temp_column] == white_square_obstacle:
+#                 return True
+#             elif board[temp_row][temp_column] == white_chess_queen:
+#                 return False
+#             temp_row += 1
+#             temp_column += 1
+#     return True
 
 
+# TODO: keep this one
 def check_right_diagonal(board, row, column):
     if row != 0 and column != size - 1:
         temp_row = row - 1
@@ -155,20 +158,21 @@ def check_right_diagonal(board, row, column):
     return True
 
 
-def check_left_down_diagonal(board, row, column):
-    if row != size - 1 and column != 0:
-        temp_row = row + 1
-        temp_column = column - 1
-        while temp_row < size and temp_column >= 0:
-            if board[temp_row][temp_column] == white_square_obstacle:
-                return True
-            elif board[temp_row][temp_column] == white_chess_queen:
-                return False
-            temp_row += 1
-            temp_column -= 1
-    return True
+# def check_left_down_diagonal(board, row, column):
+#     if row != size - 1 and column != 0:
+#         temp_row = row + 1
+#         temp_column = column - 1
+#         while temp_row < size and temp_column >= 0:
+#             if board[temp_row][temp_column] == white_square_obstacle:
+#                 return True
+#             elif board[temp_row][temp_column] == white_chess_queen:
+#                 return False
+#             temp_row += 1
+#             temp_column -= 1
+#     return True
 
 
+# TODO: keep this one
 def check_left_diagonal(board, row, column):
     if row != 0 and column != 0:
         temp_row = row - 1
@@ -183,45 +187,47 @@ def check_left_diagonal(board, row, column):
     return True
 
 
-def check_down_column(board, row, column):
-    if row != size - 1:
-        for i in range(row + 1, 1, 1):
-            if board[row][column] == white_square_obstacle:
-                return True
-            elif board[row][column] == white_chess_queen:
-                return False
-        return True
-    return True
+# def check_down_column(board, row, column):
+#     if row != size - 1:
+#         for i in range(row + 1, 1, 1):
+#             if board[row][column] == white_square_obstacle:
+#                 return True
+#             elif board[row][column] == white_chess_queen:
+#                 return False
+#         return True
+#     return True
 
 
+# TODO: keep this one
 def check_up_column(board, row, column):
     if row != 0:
         for i in range(row - 1, -1, -1):
-            if board[row][column] == white_square_obstacle:
+            if board[i][column] == white_square_obstacle:
                 return True
-            elif board[row][column] == white_chess_queen:
+            elif board[i][column] == white_chess_queen:
                 return False
         return True
     return True
 
 
-def check_right_side_row(board, row, column):
-    if column != size - 1:
-        for i in range(column + 1, 1, size - 1):
-            if board[row][column] == white_square_obstacle:
-                return True
-            elif board[row][column] == white_chess_queen:
-                return False
-        return True
-    return True
+# def check_right_side_row(board, row, column):
+#     if column != size - 1:
+#         for i in range(column + 1, 1, size - 1):
+#             if board[row][column] == white_square_obstacle:
+#                 return True
+#             elif board[row][column] == white_chess_queen:
+#                 return False
+#         return True
+#     return True
 
 
+# TODO: keep this one
 def check_left_side_row(board, row, column):
     if column != 0:
         for i in range(column - 1, -1, -1):
-            if board[row][column] == white_square_obstacle:
+            if board[row][i] == white_square_obstacle:
                 return True
-            elif board[row][column] == white_chess_queen:
+            elif board[row][i] == white_chess_queen:
                 return False
         return True
     return True
@@ -238,7 +244,14 @@ def selection():
         goal_index = all_fitness_results.index(min(all_fitness_results))
         goal = env[goal_index]
         return env
-    cross_over_function()
+    smallest_fitness_function = None
+    while len(new_env) < size:
+        smallest_fitness_function = min(all_fitness_results)
+        smallest_index = all_fitness_results.index(smallest_fitness_function)
+        new_env.append(env[smallest_index])
+        all_fitness_results.remove(smallest_fitness_function)
+        env.remove(env[smallest_index])
+    return new_env
 
 
 def cross_over_function():
@@ -289,4 +302,11 @@ if __name__ == '__main__':
         if is_optimal_solution_option(gen):
             solution_board = populate_final_board(gen)
             print_board(solution_board)
-
+    while True:
+        cross_over_function()
+        env = selection()
+        counter += 1
+        if goal_index >= 0:
+            print(counter)
+            temp_solution_board = populate_final_board(goal)
+            print_board(temp_solution_board)
